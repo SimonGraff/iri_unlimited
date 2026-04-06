@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>Radreise Tracker</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e17;--card:#111827;--card2:#1a2332;--bdr:#1e2d3d;--tx:#e2e8f0;--tx2:#64748b;--tx3:#475569;--ac:#f97316;--acg:rgba(249,115,22,.15);--ac2:#06b6d4;--grn:#22c55e;--gld:#fbbf24;--sf:'Instrument Serif',Georgia,serif;--sn:'DM Sans',system-ui,sans-serif;--mn:'JetBrains Mono',monospace;--r:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sn);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+.hd{padding:2rem 2rem 1rem;position:relative;overflow:hidden}
+.hd::before{content:'';position:absolute;top:-80px;left:-80px;width:300px;height:300px;background:radial-gradient(circle,var(--acg),transparent 70%);pointer-events:none}
+.hd-in{max-width:1400px;margin:0 auto;position:relative;z-index:1}
+.hd h1{font-family:var(--sf);font-size:clamp(2.2rem,5vw,3.5rem);font-weight:400;letter-spacing:-.02em;line-height:1.1}
+.hd h1 span{color:var(--ac)}
+.hd .sub{font-size:.95rem;color:var(--tx2);margin-top:.5rem;font-weight:300}
+.lb{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);padding:4px 12px;border-radius:20px;font-size:.75rem;color:var(--grn);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-top:.8rem}
+.lb .dot{width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pls 2s ease-in-out infinite}
+@keyframes pls{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.mn{max-width:1400px;margin:0 auto;padding:0 2rem 3rem;display:grid;grid-template-columns:1fr 400px;gap:1.5rem}
+@media(max-width:1024px){.mn{grid-template-columns:1fr}}
+.mc{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--bdr);min-height:620px}
+#map{width:100%;height:100%;min-height:620px;background:var(--card)}
+.mo{position:absolute;top:12px;left:12px;z-index:1000;display:flex;gap:8px;flex-wrap:wrap}
+.ms{background:rgba(10,14,23,.88);backdrop-filter:blur(12px);border:1px solid var(--bdr);padding:8px 14px;border-radius:10px;font-family:var(--mn);font-size:.8rem}
+.ms .ml{font-family:var(--sn);font-size:.6rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
+.ms .mv{font-weight:600}.ms .mv.a1{color:var(--ac)}.ms .mv.a2{color:var(--ac2)}
+.ps{grid-column:1/-1;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:1.5rem}
+.ph{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1rem}
+.ph h2{font-family:var(--sf);font-size:1.3rem;font-weight:400}
+.ph .pp{font-family:var(--mn);font-size:1.8rem;color:var(--ac);font-weight:600}
+.pb{width:100%;height:12px;background:var(--bg);border-radius:6px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--ac),#fb923c);border-radius:6px;transition:width 1.5s cubic-bezier(.22,1,.36,1);position:relative}
+.pf::after{content:'';position:absolute;right:0;top:0;bottom:0;width:30px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3));border-radius:0 6px 6px 0}
+.pc{display:flex;justify-content:space-between;margin-top:.5rem;font-size:.75rem;color:var(--tx2)}
+.sb{display:flex;flex-direction:column;gap:1.5rem}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sc{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:1rem;transition:border-color .3s,background .3s}
+.sc:hover{border-color:rgba(249,115,22,.3);background:var(--card2)}
+.sc .si{font-size:1.3rem;margin-bottom:.3rem}
+.sc .sl{font-size:.65rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.15rem}
+.sc .sv{font-family:var(--mn);font-size:1.3rem;font-weight:600}
+.sc .ss{font-size:.7rem;color:var(--tx3);margin-top:2px}
+.es{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.eh{padding:1rem 1.2rem;border-bottom:1px solid var(--bdr);font-family:var(--sf);font-size:1.1rem}
+.el{max-height:300px;overflow-y:auto}
+.et{padding:.8rem 1.2rem;border-bottom:1px solid rgba(30,45,61,.5);cursor:pointer;transition:background .2s;display:flex;gap:.8rem;align-items:flex-start}
+.et:hover{background:var(--card2)}.et:last-child{border-bottom:none}
+.et .en{font-family:var(--mn);font-size:.7rem;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;flex-shrink:0;font-weight:600;margin-top:2px}
+.et .ei{flex:1}.et .nm{font-size:.85rem;font-weight:500;margin-bottom:2px}
+.et .em{font-size:.7rem;color:var(--tx2);display:flex;gap:.8rem;flex-wrap:wrap}
+.evs{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:1.2rem}
+.evh{font-family:var(--sf);font-size:1.1rem;margin-bottom:.8rem}
+.evw{width:100%;height:120px;position:relative}.evw canvas{width:100%;height:100%;display:block}
+.as{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.aH{padding:1rem 1.2rem;border-bottom:1px solid var(--bdr);font-family:var(--sf);font-size:1.1rem;display:flex;justify-content:space-between;align-items:center}
+.aC{font-family:var(--mn);font-size:.75rem;color:var(--gld)}
+.aG{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));max-height:420px;overflow-y:auto}
+.ai{padding:.8rem 1.2rem;border-bottom:1px solid rgba(30,45,61,.5);border-right:1px solid rgba(30,45,61,.5);display:flex;gap:.8rem;align-items:center;transition:background .2s}
+.ai:hover{background:var(--card2)}.ai.lk{opacity:.35}
+.ab{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ab.gold{background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3)}
+.ab.silver{background:rgba(148,163,184,.15);border:1px solid rgba(148,163,184,.3)}
+.ab.bronze{background:rgba(180,83,9,.15);border:1px solid rgba(180,83,9,.3)}
+.ab.lock{background:rgba(71,85,105,.15);border:1px solid rgba(71,85,105,.3)}
+.aI{flex:1}.aT{font-size:.8rem;font-weight:600;margin-bottom:1px}.aD{font-size:.68rem;color:var(--tx2)}
+.aS{font-size:.75rem}
+.tk{grid-column:1/-1;overflow:hidden;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:.7rem 0}
+.tki{display:flex;gap:3rem;animation:scr 35s linear infinite;white-space:nowrap}
+@keyframes scr{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tkit{font-size:.8rem;color:var(--tx2);flex-shrink:0}.tkit span{color:var(--ac);font-weight:600}
+.up{grid-column:1/-1;background:var(--card);border:2px dashed var(--bdr);border-radius:var(--r);padding:2rem;text-align:center;transition:border-color .3s,background .3s;cursor:pointer}
+.up:hover{border-color:var(--ac);background:var(--acg)}
+.up input{display:none}
+.reset-row{grid-column:1/-1;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.rbtn{background:var(--card);border:1px solid var(--bdr);color:var(--tx2);padding:.5rem 1.2rem;border-radius:var(--r);font-size:.8rem;cursor:pointer;font-family:var(--sn);transition:all .3s}
+.rbtn:hover{border-color:var(--ac);color:var(--tx)}
+.demo-banner{grid-column:1/-1;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);border-radius:var(--r);padding:.8rem 1.2rem;font-size:.8rem;color:var(--tx2);text-align:center;display:none}
+.demo-banner span{color:var(--ac);font-weight:600}
+.leaflet-control-attribution{font-size:9px!important}
+.cm{display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
+.tst{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid var(--gld);color:var(--tx);padding:.8rem 1.5rem;border-radius:var(--r);font-size:.85rem;z-index:9999;opacity:0;transition:all .5s cubic-bezier(.22,1,.36,1);pointer-events:none}
+.tst.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="hd"><div class="hd-in">
+  <h1>Radreise <span>Tracker</span></h1>
+  <div class="sub">Quer durch Deutschland — von der dänischen Grenze bis zum Ziel</div>
+  <div class="lb"><span class="dot"></span> Unterwegs</div>
+</div></div>
+<div class="mn">
+  <div class="mc">
+    <div class="mo">
+      <div class="ms"><div class="ml">Gefahren</div><div class="mv a1" id="mD">0 km</div></div>
+      <div class="ms"><div class="ml">Etappen</div><div class="mv a2" id="mE">0</div></div>
+    </div>
+    <div id="map"></div>
+  </div>
+  <div class="sb">
+    <div class="sg">
+      <div class="sc"><div class="si">🚴‍♀️</div><div class="sl">Distanz</div><div class="sv" id="sD">—</div><div class="ss" id="sDs"></div></div>
+      <div class="sc"><div class="si">⏱️</div><div class="sl">Fahrzeit</div><div class="sv" id="sT">—</div><div class="ss" id="sTs"></div></div>
+      <div class="sc"><div class="si">⛰️</div><div class="sl">Höhenmeter</div><div class="sv" id="sE">—</div><div class="ss" id="sEs"></div></div>
+      <div class="sc"><div class="si">🔥</div><div class="sl">Kalorien</div><div class="sv" id="sC">—</div><div class="ss" id="sCs"></div></div>
+      <div class="sc"><div class="si">📅</div><div class="sl">Reisetage</div><div class="sv" id="sR">—</div><div class="ss" id="sRs"></div></div>
+      <div class="sc"><div class="si">💨</div><div class="sl">Ø Tempo</div><div class="sv" id="sA">—</div><div class="ss" id="sAs"></div></div>
+    </div>
+    <div class="es"><div class="eh">📍 Etappen</div><div class="el" id="eL"></div></div>
+    <div class="evs"><div class="evh">📈 Höhenprofil (gesamt)</div><div class="evw"><canvas id="eC"></canvas></div></div>
+  </div>
+  <div class="ps">
+    <div class="ph"><h2>Fortschritt</h2><div class="pp" id="pP">0%</div></div>
+    <div class="pb"><div class="pf" id="pF" style="width:0%"></div></div>
+    <div class="pc"><span>🇩🇰 Flensburg</span><span id="pK"></span><span>🏁 Ziel</span></div>
+  </div>
+  <div class="as" style="grid-column:1/-1">
+    <div class="aH">🏆 Achievements <span class="aC" id="aN">0/0</span></div>
+    <div class="aG" id="aL"></div>
+  </div>
+  <div class="tk"><div class="tki" id="tI"></div></div>
+  <div class="demo-banner" id="demoBanner">🗺️ <span>Demo-Modus</span> — Lade GPX-Dateien aus Komoot hoch, um die Beispieldaten zu ersetzen</div>
+  <div class="up" id="uZ">
+    <div style="font-size:2rem;margin-bottom:.5rem">📂</div>
+    <div style="font-size:.9rem;color:var(--tx2)"><strong style="color:var(--tx)">GPX-Dateien hierher ziehen</strong> oder klicken<br><span style="font-size:.75rem;color:var(--tx3)">Komoot → Tour → Exportieren → Als GPX-Datei</span></div>
+    <input type="file" id="gI" accept=".gpx" multiple>
+  </div>
+  <div class="reset-row">
+    <button class="rbtn" onclick="resetDemo()">🗺️ Demo-Daten laden</button>
+    <button class="rbtn" onclick="clearAll()">🗑️ Alle Daten löschen</button>
+  </div>
+</div>
+<div class="tst" id="tst"></div>
+
+<script>
+var etappen=[], map, layers=[];
+
+var DEMO=[
+  {name:"Flensburg \u2192 Schleswig",date:"2026-03-15",distance:38.4,duration:142,elevGain:165,elevLoss:170,elevations:[12,18,25,34,28,22,35,48,42,31,26,38,52,45,33,24,19,28,36,22,18,30,42,35,28,20,15],coords:[[54.7937,9.437],[54.781,9.4435],[54.758,9.462],[54.729,9.483],[54.693,9.510],[54.658,9.535],[54.620,9.558],[54.582,9.573],[54.546,9.562],[54.5155,9.569]],color:'#f97316'},
+  {name:"Schleswig \u2192 Rendsburg",date:"2026-03-16",distance:36.2,duration:128,elevGain:110,elevLoss:118,elevations:[14,18,22,28,32,25,18,24,35,40,32,28,22,30,38,35,28,22,16,20],coords:[[54.5155,9.569],[54.487,9.583],[54.456,9.601],[54.423,9.619],[54.389,9.637],[54.355,9.654],[54.322,9.662],[54.3088,9.6642]],color:'#fb923c'},
+  {name:"Rendsburg \u2192 Neum\u00fcnster",date:"2026-03-18",distance:34.8,duration:118,elevGain:85,elevLoss:80,elevations:[12,15,20,25,30,28,22,18,25,32,28,20,16,22,28,35,30,22,18],coords:[[54.3088,9.6642],[54.278,9.698],[54.244,9.737],[54.210,9.776],[54.176,9.815],[54.140,9.855],[54.105,9.896],[54.074,9.982]],color:'#f59e0b'},
+  {name:"Neum\u00fcnster \u2192 Hamburg",date:"2026-03-19",distance:72.5,duration:248,elevGain:195,elevLoss:210,elevations:[18,22,28,35,42,38,30,25,32,45,52,48,38,30,25,35,48,55,48,40,32,28,22,16,12,8],coords:[[54.074,9.982],[54.037,9.976],[53.998,9.970],[53.958,9.964],[53.918,9.960],[53.876,9.956],[53.834,9.953],[53.792,9.951],[53.750,9.952],[53.708,9.956],[53.666,9.962],[53.625,9.970],[53.588,9.980],[53.553,9.9935]],color:'#eab308'},
+  {name:"Hamburg \u2192 Soltau",date:"2026-03-21",distance:85.3,duration:292,elevGain:280,elevLoss:260,elevations:[8,12,18,25,35,45,55,62,58,50,42,55,68,75,70,62,55,65,78,85,80,72,65,58,68,78,88,82,75,68],coords:[[53.553,9.9935],[53.522,10.024],[53.488,10.056],[53.452,10.087],[53.416,10.116],[53.380,10.141],[53.343,10.162],[53.305,10.139],[53.267,10.113],[53.229,10.085],[53.190,10.057],[53.150,10.029],[53.110,10.001],[53.070,9.971],[53.030,9.940],[52.986,9.841]],color:'#84cc16'},
+  {name:"Soltau \u2192 Celle",date:"2026-03-22",distance:62.8,duration:215,elevGain:180,elevLoss:195,elevations:[88,82,78,72,68,75,82,78,70,65,72,80,75,68,62,55,60,68,62,55,48,42,50,58,52,45,38,42,48,40,35],coords:[[52.986,9.841],[52.954,9.831],[52.921,9.821],[52.887,9.813],[52.853,9.806],[52.819,9.801],[52.785,9.797],[52.751,9.795],[52.717,9.794],[52.683,9.795],[52.649,9.798],[52.625,9.808]],color:'#22c55e'},
+  {name:"Celle \u2192 Hannover",date:"2026-03-24",distance:48.2,duration:165,elevGain:125,elevLoss:130,elevations:[35,38,42,48,52,48,42,38,45,52,58,55,48,42,55,62,58,52,48,55,60,55,48,42],coords:[[52.625,9.808],[52.589,9.781],[52.553,9.754],[52.517,9.729],[52.481,9.706],[52.445,9.686],[52.409,9.705],[52.3755,9.7389]],color:'#06b6d4'},
+  {name:"Hannover \u2192 Alfeld (Leine)",date:"2026-03-25",distance:58.6,duration:202,elevGain:340,elevLoss:285,elevations:[55,58,65,72,80,88,95,105,115,108,98,110,125,135,128,118,130,142,155,148,138,150,165,175,168,158,148,155,168,162],coords:[[52.3755,9.7389],[52.334,9.748],[52.292,9.757],[52.250,9.763],[52.208,9.769],[52.166,9.774],[52.124,9.780],[52.082,9.786],[52.0518,9.8122]],color:'#a78bfa'},
+  {name:"Alfeld \u2192 G\u00f6ttingen",date:"2026-03-26",distance:64.8,duration:228,elevGain:420,elevLoss:455,elevations:[162,170,182,195,210,205,192,185,198,215,228,220,208,195,210,225,238,232,218,205,220,235,248,240,228,215,200,190,178,165,155,148,152],coords:[[52.0518,9.8122],[51.996,9.824],[51.940,9.838],[51.884,9.854],[51.828,9.870],[51.772,9.886],[51.716,9.902],[51.660,9.918],[51.604,9.934],[51.5415,9.9358]],color:'#ec4899'}
+];
+
+// ===================== ACHIEVEMENTS =====================
+var ACHS=[
+  {i:'🎬',t:'Erste Umdrehung',d:'Erste Etappe geschafft',r:'bronze',c:function(e){return e.length>=1}},
+  {i:'💯',t:'Centurion',d:'100 km Gesamtdistanz',r:'bronze',c:function(_,s){return s.td>=100}},
+  {i:'🔥',t:'Doppelter Centurion',d:'200 km Gesamtdistanz',r:'silver',c:function(_,s){return s.td>=200}},
+  {i:'⚔️',t:'Spartanerin',d:'300 km Gesamtdistanz',r:'silver',c:function(_,s){return s.td>=300}},
+  {i:'🚀',t:'Halbes Tausend',d:'500 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=500}},
+  {i:'✋',t:'High Five',d:'5 Etappen absolviert',r:'bronze',c:function(e){return e.length>=5}},
+  {i:'🔟',t:'Zweistellig',d:'10 Etappen absolviert',r:'silver',c:function(e){return e.length>=10}},
+  {i:'🏅',t:'Marathon+',d:'Einzeletappe \u00fcber 42 km',r:'bronze',c:function(e){return e.some(function(x){return x.distance>=42.195})}},
+  {i:'🦁',t:'L\u00f6wenetappe',d:'\u00dcber 80 km an einem Tag',r:'gold',c:function(e){return e.some(function(x){return x.distance>=80})}},
+  {i:'🧗',t:'Bergziege',d:'1.000 H\u00f6henmeter gesamt',r:'silver',c:function(_,s){return s.te>=1000}},
+  {i:'🏔️',t:'Brocken bezwungen',d:'2.000 H\u00f6henmeter gesamt',r:'gold',c:function(_,s){return s.te>=2000}},
+  {i:'🍕',t:'Pizza verdient',d:'1.000 kcal verbrannt',r:'bronze',c:function(_,s){return s.tc>=1000}},
+  {i:'🍰',t:'Tortenschlacht',d:'5.000 kcal verbrannt',r:'silver',c:function(_,s){return s.tc>=5000}},
+  {i:'🏋️',t:'Kalorienvernichterin',d:'10.000 kcal verbrannt',r:'gold',c:function(_,s){return s.tc>=10000}},
+  {i:'🐦',t:'Sattelgewohnt',d:'3+ Std Fahrzeit an einem Tag',r:'bronze',c:function(e){return e.some(function(x){return x.duration>=180})}},
+  {i:'🪑',t:'Eiserner Hintern',d:'5+ Std Sattelzeit',r:'gold',c:function(e){return e.some(function(x){return x.duration>=300})}},
+  {i:'💨',t:'Wirbelwind',d:'\u00d8 \u00fcber 22 km/h',r:'silver',c:function(e){return e.some(function(x){return(x.distance/(x.duration/60))>=22})}},
+  {i:'🐢',t:'Stetiger Strom',d:'5 Etappen mit mind. 30 km',r:'silver',c:function(e){return e.filter(function(x){return x.distance>=30}).length>=5}},
+  {i:'📅',t:'Wochenkriegerin',d:'7+ Reisetage',r:'silver',c:function(_,s){return s.dy>=7}},
+  {i:'🎯',t:'Halbzeit!',d:'50% der Route geschafft',r:'gold',c:function(_,s){return s.pct>=50}},
+  {i:'🍔',t:'Burgermeisterin',d:'2.500 kcal an einem Tag',r:'gold',c:function(e){return e.some(function(x){return cc(x.distance,x.duration,x.elevGain)>=2500})}},
+  {i:'🎩',t:'Hattrick',d:'3 Tage in Folge gefahren',r:'bronze',c:function(e){if(e.length<3)return false;var d=[],s={};e.forEach(function(x){if(x.date&&!s[x.date]){d.push(x.date);s[x.date]=1}});d.sort();var k=1;for(var i=1;i<d.length;i++){if((new Date(d[i])-new Date(d[i-1]))/864e5===1){k++;if(k>=3)return true}else k=1}return false}},
+  {i:'🌾',t:'Flachlandpilotin',d:'Etappe mit unter 50m Anstieg',r:'bronze',c:function(e){return e.some(function(x){return(x.elevGain||0)<50})}},
+];
+
+// ===================== CALC =====================
+// Personalisiert: 36J, weiblich, 95.4 kg, 165 cm
+var RIDER_WEIGHT=95.4;
+function cc(d,t,e){
+  var h=t/60;
+  if(h<=0)return 0;
+  var sp=d/h; // km/h
+  // MET nach Compendium of Physical Activities (Radfahren)
+  var m;
+  if(sp>=25) m=10;
+  else if(sp>=20) m=8;
+  else if(sp>=16) m=6.8;
+  else if(sp>=12) m=5.8;
+  else m=4.0;
+  // Grundformel: MET × Gewicht × Stunden
+  var baseCal=m*RIDER_WEIGHT*h;
+  // Höhenbonus: ~0.5 kcal pro Höhenmeter (Mehraufwand bergauf)
+  var elevBonus=(e||0)*0.5;
+  return Math.round(baseCal+elevBonus);
+}
+function fd(m){var h=Math.floor(m/60),mm=m%60;return h>0?h+'h '+mm+'min':mm+'min'}
+function gs(l){
+  var td=0,tt=0,te=0,tc=0;
+  l.forEach(function(e){td+=e.distance;tt+=e.duration;te+=(e.elevGain||0);tc+=cc(e.distance,e.duration,e.elevGain||0)});
+  var da=l.map(function(e){return e.date}).filter(Boolean).sort();
+  var dy=da.length>0?Math.ceil((new Date(da[da.length-1])-new Date(da[0]))/864e5)+1:0;
+  var rd=l.length,as=tt>0?td/(tt/60):0,est=900,pct=Math.min(100,td/est*100);
+  return{td:td,tt:tt,te:te,tc:tc,dy:dy,rd:rd,as:as,est:est,pct:pct};
+}
+
+// ===================== MAP =====================
+function initMap(){
+  map=L.map('map',{zoomControl:true}).setView([52.8,9.9],7);
+  // Use CartoDB Voyager (no referrer issues, clean look)
+  // Fallback chain: try CartoDB first, then OSM with subdomains
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+    maxZoom:19,
+    subdomains:'abcd',
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+  }).addTo(map);
+}
+
+function drawRoutes(){
+  layers.forEach(function(l){map.removeLayer(l)});layers=[];
+  if(!etappen.length)return;
+  var all=[];
+  etappen.forEach(function(et){
+    if(!et.coords||et.coords.length<2)return;
+    var sh=L.polyline(et.coords,{color:'#000',weight:7,opacity:.3}).addTo(map);layers.push(sh);
+    var ln=L.polyline(et.coords,{color:et.color,weight:4,opacity:.9,lineJoin:'round',lineCap:'round'}).addTo(map);
+    ln.bindPopup('<div style="font-family:system-ui;font-size:13px"><b>'+et.name+'</b><br>'+et.distance+' km · '+fd(et.duration)+' · '+(et.elevGain||0)+'m ↑<br>🔥 '+cc(et.distance,et.duration,et.elevGain||0)+' kcal</div>');
+    layers.push(ln);
+    et.coords.forEach(function(c){all.push(c)});
+  });
+  if(etappen[0]&&etappen[0].coords&&etappen[0].coords.length){
+    var m1=L.marker(etappen[0].coords[0],{icon:L.divIcon({className:'cm',html:'🇩🇰',iconSize:[28,28],iconAnchor:[14,14]})}).addTo(map).bindPopup('🇩🇰 Start — Flensburg');
+    layers.push(m1);
+  }
+  var la=etappen[etappen.length-1];
+  if(la&&la.coords&&la.coords.length){
+    var p=la.coords[la.coords.length-1];
+    var m2=L.marker(p,{icon:L.divIcon({className:'cm',html:'🚴‍♀️',iconSize:[32,32],iconAnchor:[16,16]})}).addTo(map).bindPopup('📍 Aktuell — '+la.name.split('→').pop().trim());
+    layers.push(m2);
+  }
+  if(all.length)map.fitBounds(L.latLngBounds(all),{padding:[40,40]});
+}
+
+// ===================== GPX =====================
+function parseGPX(x){
+  var d=new DOMParser().parseFromString(x,'text/xml');
+  var ne=d.querySelector('trk>name')||d.querySelector('metadata>name');
+  var nm=ne?ne.textContent:'Unbenannte Etappe';
+  var te=d.querySelector('metadata>time')||d.querySelector('trkpt>time');
+  var dt=te?te.textContent.slice(0,10):new Date().toISOString().slice(0,10);
+  var pts=d.querySelectorAll('trkpt');if(!pts.length)return null;
+  var co=[],el=[],ti=[];
+  pts.forEach(function(p){co.push([parseFloat(p.getAttribute('lat')),parseFloat(p.getAttribute('lon'))]);var e=p.querySelector('ele');if(e)el.push(parseFloat(e.textContent));var t=p.querySelector('time');if(t)ti.push(new Date(t.textContent))});
+  var dist=0;for(var i=1;i<co.length;i++)dist+=hv(co[i-1],co[i]);
+  var dur=ti.length>=2?(ti[ti.length-1]-ti[0])/6e4:(dist/18)*60;
+  var eg=0,elo=0;for(var j=1;j<el.length;j++){var dd=el[j]-el[j-1];if(dd>0)eg+=dd;else elo+=Math.abs(dd)}
+  var cs=['#f97316','#fb923c','#f59e0b','#eab308','#84cc16','#22c55e','#06b6d4','#a78bfa','#ec4899','#ef4444'];
+  return{name:nm,date:dt,distance:Math.round(dist*10)/10,duration:Math.round(dur),elevGain:Math.round(eg),elevLoss:Math.round(elo),coords:co,color:cs[etappen.length%cs.length],elevations:el};
+}
+function hv(a,b){var R=6371,dL=(b[0]-a[0])*Math.PI/180,dN=(b[1]-a[1])*Math.PI/180,la=a[0]*Math.PI/180,lb=b[0]*Math.PI/180;var x=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(la)*Math.cos(lb)*Math.sin(dN/2)*Math.sin(dN/2);return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+
+// ===================== RENDER =====================
+function render(){
+  var s=gs(etappen);
+  document.getElementById('mD').textContent=s.td.toFixed(1)+' km';
+  document.getElementById('mE').textContent=etappen.length;
+  document.getElementById('sD').textContent=s.td.toFixed(1)+' km';
+  document.getElementById('sDs').textContent='≈ '+(s.td/42.195).toFixed(1)+' Marathons';
+  document.getElementById('sT').textContent=fd(s.tt);
+  document.getElementById('sTs').textContent='Ø '+s.as.toFixed(1)+' km/h';
+  document.getElementById('sE').textContent=s.te.toLocaleString()+' m ↑';
+  document.getElementById('sEs').textContent='≈ '+(s.te/8849*100).toFixed(2)+'% Everest';
+  document.getElementById('sC').textContent=s.tc.toLocaleString();
+  document.getElementById('sCs').textContent='≈ '+Math.round(s.tc/350)+' Stück Kuchen 🍰';
+  document.getElementById('sR').textContent=s.dy;
+  document.getElementById('sRs').textContent=s.rd+' davon im Sattel';
+  document.getElementById('sA').textContent=s.as.toFixed(1)+' km/h';
+  var mx=etappen.length?Math.max.apply(null,etappen.map(function(e){return e.distance})):0;
+  document.getElementById('sAs').textContent='Längste: '+mx.toFixed(1)+' km';
+  document.getElementById('pP').textContent=s.pct.toFixed(1)+'%';
+  document.getElementById('pF').style.width=s.pct+'%';
+  document.getElementById('pK').textContent=s.td.toFixed(0)+' / ~'+s.est+' km';
+
+  var el=document.getElementById('eL');
+  el.innerHTML=etappen.map(function(et,i){
+    return '<div class="et" data-i="'+i+'"><div class="en" style="color:'+et.color+';background:'+et.color+'18;border:1px solid '+et.color+'40">'+(i+1)+'</div><div class="ei"><div class="nm">'+et.name+'</div><div class="em"><span>📏 '+et.distance+' km</span><span>⏱ '+fd(et.duration)+'</span><span>⛰ '+(et.elevGain||0)+'m ↑</span><span>🔥 '+cc(et.distance,et.duration,et.elevGain||0)+' kcal</span></div></div></div>';
+  }).join('');
+  el.querySelectorAll('.et').forEach(function(e){
+    e.addEventListener('click',function(){
+      var et=etappen[parseInt(e.dataset.i)];
+      if(et.coords&&et.coords.length)map.fitBounds(L.latLngBounds(et.coords),{padding:[60,60]});
+    });
+  });
+
+  // Achievements
+  var ac=document.getElementById('aL'),ul=0;
+  ac.innerHTML=ACHS.map(function(a){
+    var ok=a.c(etappen,s);if(ok)ul++;
+    return '<div class="ai '+(ok?'':'lk')+'"><div class="ab '+(ok?a.r:'lock')+'">'+a.i+'</div><div class="aI"><div class="aT">'+a.t+'</div><div class="aD">'+a.d+'</div></div><div class="aS">'+(ok?'✅':'🔒')+'</div></div>';
+  }).join('');
+  document.getElementById('aN').textContent=ul+' / '+ACHS.length;
+
+  renderElev();
+  renderTicker(s);
+  drawRoutes();
+  updateDemoBanner();
+}
+
+function renderElev(){
+  var c=document.getElementById('eC'),w0=c.parentElement,w=w0.clientWidth,h=w0.clientHeight;
+  if(w<10)return;c.width=w*2;c.height=h*2;var ctx=c.getContext('2d');ctx.scale(2,2);
+  var all=[];
+  etappen.forEach(function(et){
+    if(et.elevations&&et.elevations.length){var st=Math.max(1,Math.floor(et.elevations.length/40));for(var i=0;i<et.elevations.length;i+=st)all.push(et.elevations[i])}
+    else{var b=all.length?all[all.length-1]:30;for(var j=0;j<15;j++)all.push(b+Math.sin(j/15*Math.PI)*(et.elevGain||50)*.6+Math.random()*20)}
+  });
+  if(all.length<2)return;
+  var mn=Math.min.apply(null,all),mx=Math.max.apply(null,all),rng=mx-mn||1;
+  var g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'rgba(249,115,22,.3)');g.addColorStop(1,'rgba(249,115,22,.02)');
+  ctx.beginPath();ctx.moveTo(0,h);
+  all.forEach(function(e,i){ctx.lineTo((i/(all.length-1))*w,h-((e-mn)/rng)*(h-10)-5)});
+  ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();
+  all.forEach(function(e,i){var x=(i/(all.length-1))*w,y=h-((e-mn)/rng)*(h-10)-5;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
+  ctx.strokeStyle='#f97316';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.fillStyle='#64748b';ctx.font='10px monospace';
+  ctx.fillText(Math.round(mx)+'m',4,14);ctx.fillText(Math.round(mn)+'m',4,h-4);
+}
+
+function renderTicker(s){
+  // Fakten-Check:
+  // Eiffelturm: 330m (Spitze), Bodensee Länge: 63km, Erdumfang: 40.075km
+  // Pizza: ~900 kcal, Schokolade: ~530 kcal/Tafel, Smartphone: ~0.012 kWh/Ladung
+  // 1 kcal = 4184 J, 1 kWh = 3.600.000 J
+  var f=[
+    '🚴 Gesamtdistanz: <span>'+s.td.toFixed(1)+' km</span>',
+    '🍕 Das sind <span>'+Math.round(s.tc/900)+' Pizzen</span> an verbrannter Energie',
+    '🏊 Entspricht <span>'+(s.td/63).toFixed(0)+'x</span> den Bodensee der Länge nach',
+    '🌍 <span>'+(s.td/40075*100).toFixed(3)+'%</span> des Erdumfangs',
+    '🗼 Höhenmeter = <span>'+(s.te/330).toFixed(1)+'x</span> den Eiffelturm hochgeradelt',
+    '⚡ <span>'+(s.tc*4184/36e5).toFixed(1)+' kWh</span> — reicht für <span>'+Math.round(s.tc*4184/36e5/.012)+' Smartphone-Ladungen</span>',
+    '🍫 Äquivalent zu <span>'+Math.round(s.tc/530)+' Tafeln Schokolade</span>',
+    '🐎 Pro Fahrtag <span>'+(s.td/(s.rd||1)).toFixed(0)+' km</span> — ein mittelalterlicher Reiter schafft nur ~40 km',
+    '🚂 Per ICE (250 km/h) wäre das in <span>'+(s.td/250*60).toFixed(0)+' Minuten</span> erledigt',
+    '🥾 Zu Fuß (5 km/h): <span>'+(s.td/5).toFixed(0)+' Stunden</span> nonstop, also <span>'+(s.td/5/24).toFixed(1)+' Tage</span>'
+  ];
+  document.getElementById('tI').innerHTML=f.concat(f).map(function(x){return '<div class="tkit">'+x+'</div>'}).join('');
+}
+
+// ===================== PERSISTENCE =====================
+var STORE_KEY='radreise_data';
+var isDemo=false;
+
+function saveData(){
+  try{
+    var d=etappen.map(function(e){return{name:e.name,date:e.date,distance:e.distance,duration:e.duration,elevGain:e.elevGain,elevLoss:e.elevLoss,elevations:e.elevations,coords:e.coords,color:e.color}});
+    localStorage.setItem(STORE_KEY,JSON.stringify({isDemo:isDemo,etappen:d}));
+  }catch(e){}
+}
+
+function loadData(){
+  try{
+    var raw=localStorage.getItem(STORE_KEY);
+    if(raw){
+      var d=JSON.parse(raw);
+      etappen=d.etappen||[];
+      isDemo=d.isDemo!==false;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+function updateDemoBanner(){
+  var b=document.getElementById('demoBanner');
+  b.style.display=isDemo?'block':'none';
+}
+
+// ===================== UPLOAD =====================
+function setup(){
+  var z=document.getElementById('uZ'),inp=document.getElementById('gI');
+  z.addEventListener('click',function(){inp.click()});
+  z.addEventListener('dragover',function(e){e.preventDefault();z.style.borderColor='var(--ac)'});
+  z.addEventListener('dragleave',function(){z.style.borderColor='var(--bdr)'});
+  z.addEventListener('drop',function(e){e.preventDefault();z.style.borderColor='var(--bdr)';doF(e.dataTransfer.files)});
+  inp.addEventListener('change',function(e){doF(e.target.files)});
+}
+function doF(files){
+  var add=0,pend=files.length,done=0;
+  for(var i=0;i<files.length;i++){
+    if(!files[i].name.toLowerCase().endsWith('.gpx')){done++;continue}
+    (function(f){var r=new FileReader();r.onload=function(ev){
+      var p=parseGPX(ev.target.result);
+      if(p){
+        // First real upload replaces demo data
+        if(isDemo){etappen=[];isDemo=false;updateDemoBanner()}
+        etappen.push(p);add++;
+      }
+      done++;
+      if(done>=pend&&add>0){
+        etappen.sort(function(a,b){return(a.date||'').localeCompare(b.date||'')});
+        saveData();
+        render();
+        toast('🎉 '+add+' Etappe'+(add>1?'n':'')+' hochgeladen — Demo-Daten ersetzt!');
+      }
+    };r.readAsText(f)})(files[i]);
+  }
+}
+
+function resetDemo(){
+  etappen=DEMO.slice();isDemo=true;saveData();render();updateDemoBanner();
+  toast('🗺️ Demo-Daten geladen');
+}
+
+function clearAll(){
+  etappen=[];isDemo=false;saveData();render();updateDemoBanner();
+  toast('🗑️ Alle Daten gelöscht');
+}
+
+function toast(m){var e=document.getElementById('tst');e.innerHTML=m;e.classList.add('show');setTimeout(function(){e.classList.remove('show')},3000)}
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded',function(){
+  initMap();setup();
+  var loaded=loadData();
+  if(!loaded){etappen=DEMO.slice();isDemo=true;}
+  updateDemoBanner();
+  setTimeout(function(){render()},300);
+});
+</script>
+</body>
+</html>
