@@ -103,7 +103,7 @@ body{font-family:var(--sn);background:var(--bg);color:var(--tx);min-height:100vh
 <body>
 <div class="hd"><div class="hd-in">
   <h1>Radreise <span>Tracker</span></h1>
-  <div class="sub">Quer durch Deutschland — von der dänischen Grenze bis zum Ziel</div>
+  <div class="sub">Quer durch Deutschland — von Flensburg bis Lochau am Bodensee</div>
   <div class="lb"><span class="dot"></span> Unterwegs</div>
 </div></div>
 <div class="mn">
@@ -129,7 +129,7 @@ body{font-family:var(--sn);background:var(--bg);color:var(--tx);min-height:100vh
   <div class="ps">
     <div class="ph"><h2>Fortschritt</h2><div class="pp" id="pP">0%</div></div>
     <div class="pb"><div class="pf" id="pF" style="width:0%"></div></div>
-    <div class="pc"><span>🇩🇰 Flensburg</span><span id="pK"></span><span>🏁 Ziel</span></div>
+    <div class="pc"><span>🇩🇰 Flensburg</span><span id="pK"></span><span>🏁 Lochau am Bodensee</span></div>
   </div>
   <div class="as" style="grid-column:1/-1">
     <div class="aH">🏆 Achievements <span class="aC" id="aN">0/0</span></div>
@@ -203,7 +203,9 @@ var ACHS=[
   {i:'🔮',t:'600er Club',d:'600 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=600}},
   {i:'🌟',t:'Siebenhundert',d:'700 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=700}},
   {i:'👑',t:'800er K\u00f6nigin',d:'800 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=800}},
-  {i:'🏆',t:'Zieleinfahrt',d:'900 km — Reise komplett!',r:'gold',c:function(_,s){return s.td>=900}},
+  {i:'🏆',t:'Zieleinfahrt',d:'1.080 km — Lochau am Bodensee erreicht!',r:'gold',c:function(_,s){return s.td>=1080}},
+  {i:'🗺️',t:'Neunhundert',d:'900 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=900}},
+  {i:'🎆',t:'Tausender-Club',d:'1.000 km Gesamtdistanz!',r:'gold',c:function(_,s){return s.td>=1000}},
   {i:'🎲',t:'Dutzend',d:'12 Etappen absolviert',r:'silver',c:function(e){return e.length>=12}},
   {i:'💎',t:'15er Diamant',d:'15 Etappen absolviert',r:'gold',c:function(e){return e.length>=15}},
   {i:'⛰️',t:'Alpenvorgl\u00fchen',d:'3.000 H\u00f6henmeter gesamt',r:'gold',c:function(_,s){return s.te>=3000}},
@@ -217,7 +219,7 @@ var ACHS=[
   {i:'🎖️',t:'Acht auf einen Streich',d:'8 Etappen mit mind. 40 km',r:'gold',c:function(e){return e.filter(function(x){return x.distance>=40}).length>=8}},
   {i:'💪',t:'Doppel-L\u00f6win',d:'Zwei Etappen \u00fcber 80 km',r:'gold',c:function(e){return e.filter(function(x){return x.distance>=80}).length>=2}},
   {i:'🌄',t:'H\u00fcgelk\u00f6nigin',d:'Etappe mit 500+ H\u00f6henmetern',r:'gold',c:function(e){return e.some(function(x){return(x.elevGain||0)>=500})}},
-  {i:'🧭',t:'Kompass-Meisterin',d:'Gesamtstrecke l\u00e4nger als Hamburg\u2013M\u00fcnchen (612 km)',r:'gold',c:function(_,s){return s.td>=612}},
+  {i:'🧭',t:'Kompass-Meisterin',d:'Weiter als Hamburg\u2013M\u00fcnchen Luftlinie (612 km)',r:'gold',c:function(_,s){return s.td>=612}},
   {i:'🎪',t:'Kalorien-Zirkus',d:'3.000 kcal an einem Tag',r:'gold',c:function(e){return e.some(function(x){return cc(x.distance,x.duration,x.elevGain)>=3000})}},
   {i:'🛡️',t:'75% Schild',d:'75% der Route geschafft',r:'gold',c:function(_,s){return s.pct>=75}},
   {i:'🏁',t:'90% — Fast da!',d:'90% der Route geschafft',r:'gold',c:function(_,s){return s.pct>=90}},
@@ -271,7 +273,7 @@ function gs(l){
   var rd=l.length;
   var asNetto=ttNetto>0?td/(ttNetto/60):0;
   var asBrutto=ttBrutto>0?td/(ttBrutto/60):0;
-  var est=900,pct=Math.min(100,td/est*100);
+  var est=1080,pct=Math.min(100,td/est*100);
   return{td:td,ttB:ttBrutto,ttN:ttNetto,te:te,tc:tc,dy:dy,rd:rd,asN:asNetto,asB:asBrutto,est:est,pct:pct};
 }
 
@@ -306,9 +308,13 @@ function drawRoutes(){
   var la=etappen[etappen.length-1];
   if(la&&la.coords&&la.coords.length){
     var p=la.coords[la.coords.length-1];
-    var m2=L.marker(p,{icon:L.divIcon({className:'cm',html:'🚴‍♀️',iconSize:[32,32],iconAnchor:[16,16]})}).addTo(map).bindPopup('📍 Aktuell — '+la.name.split('→').pop().trim());
+    var m2=L.marker(p,{icon:L.divIcon({className:'cm',html:'\u{1F6B4}\u200D\u2640\uFE0F',iconSize:[32,32],iconAnchor:[16,16]})}).addTo(map).bindPopup('\u{1F4CD} Aktuell \u2014 '+la.name.split('\u2192').pop().trim());
     layers.push(m2);
   }
+  // Ziel-Marker: Lochau am Bodensee (47.5333, 9.75)
+  var mZ=L.marker([47.5333,9.75],{icon:L.divIcon({className:'cm',html:'\u{1F3C1}',iconSize:[28,28],iconAnchor:[14,14]})}).addTo(map).bindPopup('\u{1F3C1} Ziel \u2014 Lochau am Bodensee');
+  layers.push(mZ);
+  all.push([47.5333,9.75]);
   if(all.length)map.fitBounds(L.latLngBounds(all),{padding:[40,40]});
 }
 
