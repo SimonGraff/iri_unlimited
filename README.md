@@ -3,42 +3,6 @@
 Interaktive Web-App zur Visualisierung einer Radreise quer durch Deutschland.
 Zeigt Route auf OpenStreetMap, Statistiken, Kalorien, Höhenprofil und Achievements.
 
-## 🚀 In 5 Minuten online stellen
-
-### Schritt 1: GitHub Account
-
-Falls du noch keinen hast → [github.com/signup](https://github.com/signup)
-
-### Schritt 2: Neues Repository erstellen
-
-1. Gehe zu [github.com/new](https://github.com/new)
-2. **Repository name:** `radreise-tracker` (oder was du willst)
-3. **Public** auswählen (muss public sein für GitHub Pages)
-4. **"Add a README file"** → Haken setzen
-5. Klick **"Create repository"**
-
-### Schritt 3: index.html hochladen
-
-1. Im neuen Repository auf **"Add file"** → **"Upload files"** klicken
-2. Die Datei `index.html` aus diesem Ordner hochladen (Drag & Drop)
-3. Unten auf **"Commit changes"** klicken
-
-### Schritt 4: GitHub Pages aktivieren
-
-1. Im Repository auf **"Settings"** (Zahnrad-Tab oben)
-2. Links im Menü auf **"Pages"**
-3. Unter **"Source"** → **"Deploy from a branch"**
-4. Branch: **"main"**, Folder: **"/ (root)"**
-5. Klick **"Save"**
-6. Warte 1-2 Minuten, dann steht oben die URL:
-
-```
-https://DEIN-USERNAME.github.io/radreise-tracker/
-```
-
-**Das war's!** Diese URL kannst du deiner Partnerin schicken.
-
----
 
 ## 📱 So benutzt du die App
 
