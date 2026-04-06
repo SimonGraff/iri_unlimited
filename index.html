@@ -26,7 +26,7 @@ body{font-family:var(--sn);background:var(--bg);color:var(--tx);min-height:100vh
 @media(max-width:1024px){.mn{grid-template-columns:1fr}}
 .mc{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--bdr);min-height:620px}
 #map{width:100%;height:100%;min-height:620px;background:var(--card)}
-.mo{position:absolute;top:12px;left:12px;z-index:1000;display:flex;gap:8px;flex-wrap:wrap}
+.mo{position:absolute;top:12px;right:12px;z-index:1000;display:flex;gap:8px;flex-wrap:wrap}
 .ms{background:rgba(10,14,23,.88);backdrop-filter:blur(12px);border:1px solid var(--bdr);padding:8px 14px;border-radius:10px;font-family:var(--mn);font-size:.8rem}
 .ms .ml{font-family:var(--sn);font-size:.6rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
 .ms .mv{font-weight:600}.ms .mv.a1{color:var(--ac)}.ms .mv.a2{color:var(--ac2)}
@@ -105,7 +105,7 @@ body{font-family:var(--sn);background:var(--bg);color:var(--tx);min-height:100vh
   <div class="sb">
     <div class="sg">
       <div class="sc"><div class="si">🚴‍♀️</div><div class="sl">Distanz</div><div class="sv" id="sD">—</div><div class="ss" id="sDs"></div></div>
-      <div class="sc"><div class="si">⏱️</div><div class="sl">Fahrzeit</div><div class="sv" id="sT">—</div><div class="ss" id="sTs"></div></div>
+      <div class="sc"><div class="si">⏱️</div><div class="sl">Fahrzeit (netto)</div><div class="sv" id="sT">—</div><div class="ss" id="sTs"></div></div>
       <div class="sc"><div class="si">⛰️</div><div class="sl">Höhenmeter</div><div class="sv" id="sE">—</div><div class="ss" id="sEs"></div></div>
       <div class="sc"><div class="si">🔥</div><div class="sl">Kalorien</div><div class="sv" id="sC">—</div><div class="ss" id="sCs"></div></div>
       <div class="sc"><div class="si">📅</div><div class="sl">Reisetage</div><div class="sv" id="sR">—</div><div class="ss" id="sRs"></div></div>
@@ -154,29 +154,60 @@ var DEMO=[
 
 // ===================== ACHIEVEMENTS =====================
 var ACHS=[
+  // --- EARLY (already earned with demo data) ---
   {i:'🎬',t:'Erste Umdrehung',d:'Erste Etappe geschafft',r:'bronze',c:function(e){return e.length>=1}},
   {i:'💯',t:'Centurion',d:'100 km Gesamtdistanz',r:'bronze',c:function(_,s){return s.td>=100}},
   {i:'🔥',t:'Doppelter Centurion',d:'200 km Gesamtdistanz',r:'silver',c:function(_,s){return s.td>=200}},
   {i:'⚔️',t:'Spartanerin',d:'300 km Gesamtdistanz',r:'silver',c:function(_,s){return s.td>=300}},
-  {i:'🚀',t:'Halbes Tausend',d:'500 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=500}},
   {i:'✋',t:'High Five',d:'5 Etappen absolviert',r:'bronze',c:function(e){return e.length>=5}},
-  {i:'🔟',t:'Zweistellig',d:'10 Etappen absolviert',r:'silver',c:function(e){return e.length>=10}},
   {i:'🏅',t:'Marathon+',d:'Einzeletappe \u00fcber 42 km',r:'bronze',c:function(e){return e.some(function(x){return x.distance>=42.195})}},
   {i:'🦁',t:'L\u00f6wenetappe',d:'\u00dcber 80 km an einem Tag',r:'gold',c:function(e){return e.some(function(x){return x.distance>=80})}},
   {i:'🧗',t:'Bergziege',d:'1.000 H\u00f6henmeter gesamt',r:'silver',c:function(_,s){return s.te>=1000}},
-  {i:'🏔️',t:'Brocken bezwungen',d:'2.000 H\u00f6henmeter gesamt',r:'gold',c:function(_,s){return s.te>=2000}},
   {i:'🍕',t:'Pizza verdient',d:'1.000 kcal verbrannt',r:'bronze',c:function(_,s){return s.tc>=1000}},
   {i:'🍰',t:'Tortenschlacht',d:'5.000 kcal verbrannt',r:'silver',c:function(_,s){return s.tc>=5000}},
   {i:'🏋️',t:'Kalorienvernichterin',d:'10.000 kcal verbrannt',r:'gold',c:function(_,s){return s.tc>=10000}},
   {i:'🐦',t:'Sattelgewohnt',d:'3+ Std Fahrzeit an einem Tag',r:'bronze',c:function(e){return e.some(function(x){return x.duration>=180})}},
-  {i:'🪑',t:'Eiserner Hintern',d:'5+ Std Sattelzeit',r:'gold',c:function(e){return e.some(function(x){return x.duration>=300})}},
-  {i:'💨',t:'Wirbelwind',d:'\u00d8 \u00fcber 22 km/h',r:'silver',c:function(e){return e.some(function(x){return(x.distance/(x.duration/60))>=22})}},
   {i:'🐢',t:'Stetiger Strom',d:'5 Etappen mit mind. 30 km',r:'silver',c:function(e){return e.filter(function(x){return x.distance>=30}).length>=5}},
   {i:'📅',t:'Wochenkriegerin',d:'7+ Reisetage',r:'silver',c:function(_,s){return s.dy>=7}},
   {i:'🎯',t:'Halbzeit!',d:'50% der Route geschafft',r:'gold',c:function(_,s){return s.pct>=50}},
+  {i:'🌾',t:'Flachlandpilotin',d:'Etappe mit unter 50m Anstieg',r:'bronze',c:function(e){return e.some(function(x){return(x.elevGain||0)<50})}},
+
+  // --- MID-GAME (reachable soon) ---
+  {i:'🚀',t:'Halbes Tausend',d:'500 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=500}},
+  {i:'🔟',t:'Zweistellig',d:'10 Etappen absolviert',r:'silver',c:function(e){return e.length>=10}},
+  {i:'🏔️',t:'Brocken bezwungen',d:'2.000 H\u00f6henmeter gesamt',r:'gold',c:function(_,s){return s.te>=2000}},
+  {i:'🪑',t:'Eiserner Hintern',d:'5+ Std Sattelzeit an einem Tag',r:'gold',c:function(e){return e.some(function(x){return x.duration>=300})}},
+  {i:'💨',t:'Wirbelwind',d:'\u00d8 \u00fcber 22 km/h auf einer Etappe',r:'silver',c:function(e){return e.some(function(x){return(x.distance/(x.duration/60))>=22})}},
   {i:'🍔',t:'Burgermeisterin',d:'2.500 kcal an einem Tag',r:'gold',c:function(e){return e.some(function(x){return cc(x.distance,x.duration,x.elevGain)>=2500})}},
   {i:'🎩',t:'Hattrick',d:'3 Tage in Folge gefahren',r:'bronze',c:function(e){if(e.length<3)return false;var d=[],s={};e.forEach(function(x){if(x.date&&!s[x.date]){d.push(x.date);s[x.date]=1}});d.sort();var k=1;for(var i=1;i<d.length;i++){if((new Date(d[i])-new Date(d[i-1]))/864e5===1){k++;if(k>=3)return true}else k=1}return false}},
-  {i:'🌾',t:'Flachlandpilotin',d:'Etappe mit unter 50m Anstieg',r:'bronze',c:function(e){return e.some(function(x){return(x.elevGain||0)<50})}},
+  {i:'📅',t:'F\u00fcnf-Tage-Streak',d:'5 Tage in Folge gefahren',r:'silver',c:function(e){if(e.length<5)return false;var d=[],s={};e.forEach(function(x){if(x.date&&!s[x.date]){d.push(x.date);s[x.date]=1}});d.sort();var k=1;for(var i=1;i<d.length;i++){if((new Date(d[i])-new Date(d[i-1]))/864e5===1){k++;if(k>=5)return true}else k=1}return false}},
+
+  // --- LATE-GAME (letztes Drittel: 600-900 km) ---
+  {i:'🔮',t:'600er Club',d:'600 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=600}},
+  {i:'🌟',t:'Siebenhundert',d:'700 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=700}},
+  {i:'👑',t:'800er K\u00f6nigin',d:'800 km Gesamtdistanz',r:'gold',c:function(_,s){return s.td>=800}},
+  {i:'🏆',t:'Zieleinfahrt',d:'900 km — Reise komplett!',r:'gold',c:function(_,s){return s.td>=900}},
+  {i:'🎲',t:'Dutzend',d:'12 Etappen absolviert',r:'silver',c:function(e){return e.length>=12}},
+  {i:'💎',t:'15er Diamant',d:'15 Etappen absolviert',r:'gold',c:function(e){return e.length>=15}},
+  {i:'⛰️',t:'Alpenvorgl\u00fchen',d:'3.000 H\u00f6henmeter gesamt',r:'gold',c:function(_,s){return s.te>=3000}},
+  {i:'🥇',t:'Everest-Prozent',d:'5.000 H\u00f6henmeter — \u00fcber 50% Everest',r:'gold',c:function(_,s){return s.te>=5000}},
+  {i:'🍗',t:'Weihnachtsgans',d:'20.000 kcal verbrannt',r:'gold',c:function(_,s){return s.tc>=20000}},
+  {i:'🔋',t:'Kraftwerk',d:'30.000 kcal verbrannt',r:'gold',c:function(_,s){return s.tc>=30000}},
+  {i:'🏎️',t:'Tempo-Teufel',d:'\u00d8 \u00fcber 25 km/h auf einer Etappe',r:'gold',c:function(e){return e.some(function(x){return(x.distance/(x.duration/60))>=25})}},
+  {i:'🐴',t:'Dauergalopp',d:'4+ Std Fahrzeit an einem Tag',r:'silver',c:function(e){return e.some(function(x){return x.duration>=240})}},
+  {i:'🗓️',t:'Zwei-Wochen-Tour',d:'14+ Reisetage',r:'silver',c:function(_,s){return s.dy>=14}},
+  {i:'📆',t:'Drei-Wochen-Veteran',d:'21+ Reisetage',r:'gold',c:function(_,s){return s.dy>=21}},
+  {i:'🎖️',t:'Acht auf einen Streich',d:'8 Etappen mit mind. 40 km',r:'gold',c:function(e){return e.filter(function(x){return x.distance>=40}).length>=8}},
+  {i:'💪',t:'Doppel-L\u00f6win',d:'Zwei Etappen \u00fcber 80 km',r:'gold',c:function(e){return e.filter(function(x){return x.distance>=80}).length>=2}},
+  {i:'🌄',t:'H\u00fcgelk\u00f6nigin',d:'Etappe mit 500+ H\u00f6henmetern',r:'gold',c:function(e){return e.some(function(x){return(x.elevGain||0)>=500})}},
+  {i:'🧭',t:'Kompass-Meisterin',d:'Gesamtstrecke l\u00e4nger als Hamburg\u2013M\u00fcnchen (612 km)',r:'gold',c:function(_,s){return s.td>=612}},
+  {i:'🎪',t:'Kalorien-Zirkus',d:'3.000 kcal an einem Tag',r:'gold',c:function(e){return e.some(function(x){return cc(x.distance,x.duration,x.elevGain)>=3000})}},
+  {i:'🛡️',t:'75% Schild',d:'75% der Route geschafft',r:'gold',c:function(_,s){return s.pct>=75}},
+  {i:'🏁',t:'90% — Fast da!',d:'90% der Route geschafft',r:'gold',c:function(_,s){return s.pct>=90}},
+  {i:'🦅',t:'Adlerin',d:'Ø \u00fcber 20 km/h \u00fcber alle Etappen',r:'gold',c:function(_,s){return s.asN>=20}},
+  {i:'🎂',t:'Kalorienkuchen',d:'Genug verbrannt f\u00fcr 50 St\u00fcck Torte (17.500 kcal)',r:'silver',c:function(_,s){return s.tc>=17500}},
+  {i:'🚲',t:'Sattel-Veteran',d:'30+ Stunden Gesamtfahrzeit',r:'silver',c:function(_,s){return s.ttN>=1800}},
+  {i:'⏰',t:'Langstrecken-Uhr',d:'50+ Stunden Gesamtfahrzeit',r:'gold',c:function(_,s){return s.ttN>=3000}},
 ];
 
 // ===================== CALC =====================
@@ -200,13 +231,31 @@ function cc(d,t,e){
   return Math.round(baseCal+elevBonus);
 }
 function fd(m){var h=Math.floor(m/60),mm=m%60;return h>0?h+'h '+mm+'min':mm+'min'}
+
+// Schätze Netto-Fahrzeit aus Distanz (Komoot GPX = Brutto inkl. Pausen)
+// Annahme: Reale Fahrgeschwindigkeit ~16 km/h für Tourenradfahren
+function estimateNetMins(dist){return Math.round((dist/16)*60)}
+
 function gs(l){
-  var td=0,tt=0,te=0,tc=0;
-  l.forEach(function(e){td+=e.distance;tt+=e.duration;te+=(e.elevGain||0);tc+=cc(e.distance,e.duration,e.elevGain||0)});
-  var da=l.map(function(e){return e.date}).filter(Boolean).sort();
-  var dy=da.length>0?Math.ceil((new Date(da[da.length-1])-new Date(da[0]))/864e5)+1:0;
-  var rd=l.length,as=tt>0?td/(tt/60):0,est=900,pct=Math.min(100,td/est*100);
-  return{td:td,tt:tt,te:te,tc:tc,dy:dy,rd:rd,as:as,est:est,pct:pct};
+  var td=0,ttBrutto=0,te=0,tc=0;
+  var uniqueDays={};
+  l.forEach(function(e){
+    td+=e.distance;
+    ttBrutto+=e.duration;
+    te+=(e.elevGain||0);
+    // Kalorien basierend auf geschätzter Netto-Zeit
+    var netMin=estimateNetMins(e.distance);
+    tc+=cc(e.distance,netMin,e.elevGain||0);
+    if(e.date) uniqueDays[e.date]=true;
+  });
+  var dy=Object.keys(uniqueDays).length;
+  var ttNetto=0;
+  l.forEach(function(e){ttNetto+=estimateNetMins(e.distance)});
+  var rd=l.length;
+  var asNetto=ttNetto>0?td/(ttNetto/60):0;
+  var asBrutto=ttBrutto>0?td/(ttBrutto/60):0;
+  var est=900,pct=Math.min(100,td/est*100);
+  return{td:td,ttB:ttBrutto,ttN:ttNetto,te:te,tc:tc,dy:dy,rd:rd,asN:asNetto,asB:asBrutto,est:est,pct:pct};
 }
 
 // ===================== MAP =====================
@@ -229,7 +278,7 @@ function drawRoutes(){
     if(!et.coords||et.coords.length<2)return;
     var sh=L.polyline(et.coords,{color:'#000',weight:7,opacity:.3}).addTo(map);layers.push(sh);
     var ln=L.polyline(et.coords,{color:et.color,weight:4,opacity:.9,lineJoin:'round',lineCap:'round'}).addTo(map);
-    ln.bindPopup('<div style="font-family:system-ui;font-size:13px"><b>'+et.name+'</b><br>'+et.distance+' km · '+fd(et.duration)+' · '+(et.elevGain||0)+'m ↑<br>🔥 '+cc(et.distance,et.duration,et.elevGain||0)+' kcal</div>');
+    ln.bindPopup('<div style="font-family:system-ui;font-size:13px"><b>'+et.name+'</b><br>'+et.distance+' km \u00b7 '+fd(et.duration)+' \u00b7 '+(et.elevGain||0)+'m \u2191<br>\u{1F525} '+cc(et.distance,estimateNetMins(et.distance),et.elevGain||0)+' kcal</div>');
     layers.push(ln);
     et.coords.forEach(function(c){all.push(c)});
   });
@@ -270,25 +319,27 @@ function render(){
   document.getElementById('mD').textContent=s.td.toFixed(1)+' km';
   document.getElementById('mE').textContent=etappen.length;
   document.getElementById('sD').textContent=s.td.toFixed(1)+' km';
-  document.getElementById('sDs').textContent='≈ '+(s.td/42.195).toFixed(1)+' Marathons';
-  document.getElementById('sT').textContent=fd(s.tt);
-  document.getElementById('sTs').textContent='Ø '+s.as.toFixed(1)+' km/h';
-  document.getElementById('sE').textContent=s.te.toLocaleString()+' m ↑';
-  document.getElementById('sEs').textContent='≈ '+(s.te/8849*100).toFixed(2)+'% Everest';
+  document.getElementById('sDs').textContent='\u2248 '+(s.td/42.195).toFixed(1)+' Marathons';
+  document.getElementById('sT').textContent=fd(s.ttN);
+  document.getElementById('sTs').textContent='Brutto: '+fd(s.ttB);
+  document.getElementById('sE').textContent=s.te.toLocaleString()+' m \u2191';
+  document.getElementById('sEs').textContent='\u2248 '+(s.te/8849*100).toFixed(2)+'% Everest';
   document.getElementById('sC').textContent=s.tc.toLocaleString();
-  document.getElementById('sCs').textContent='≈ '+Math.round(s.tc/350)+' Stück Kuchen 🍰';
+  document.getElementById('sCs').textContent='\u2248 '+Math.round(s.tc/350)+' St\u00fcck Kuchen \u{1F370}';
   document.getElementById('sR').textContent=s.dy;
   document.getElementById('sRs').textContent=s.rd+' davon im Sattel';
-  document.getElementById('sA').textContent=s.as.toFixed(1)+' km/h';
+  document.getElementById('sA').textContent=s.asN.toFixed(1)+' km/h';
   var mx=etappen.length?Math.max.apply(null,etappen.map(function(e){return e.distance})):0;
-  document.getElementById('sAs').textContent='Längste: '+mx.toFixed(1)+' km';
+  document.getElementById('sAs').textContent='L\u00e4ngste: '+mx.toFixed(1)+' km';
   document.getElementById('pP').textContent=s.pct.toFixed(1)+'%';
   document.getElementById('pF').style.width=s.pct+'%';
   document.getElementById('pK').textContent=s.td.toFixed(0)+' / ~'+s.est+' km';
 
   var el=document.getElementById('eL');
   el.innerHTML=etappen.map(function(et,i){
-    return '<div class="et" data-i="'+i+'"><div class="en" style="color:'+et.color+';background:'+et.color+'18;border:1px solid '+et.color+'40">'+(i+1)+'</div><div class="ei"><div class="nm">'+et.name+'</div><div class="em"><span>📏 '+et.distance+' km</span><span>⏱ '+fd(et.duration)+'</span><span>⛰ '+(et.elevGain||0)+'m ↑</span><span>🔥 '+cc(et.distance,et.duration,et.elevGain||0)+' kcal</span></div></div></div>';
+    var netMin=estimateNetMins(et.distance);
+    var kcal=cc(et.distance,netMin,et.elevGain||0);
+    return '<div class="et" data-i="'+i+'"><div class="en" style="color:'+et.color+';background:'+et.color+'18;border:1px solid '+et.color+'40">'+(i+1)+'</div><div class="ei"><div class="nm">'+et.name+'</div><div class="em"><span>\u{1F4CF} '+et.distance+' km</span><span>\u23F1 '+fd(et.duration)+'</span><span>\u26F0 '+(et.elevGain||0)+'m \u2191</span><span>\u{1F525} '+kcal+' kcal</span></div></div></div>';
   }).join('');
   el.querySelectorAll('.et').forEach(function(e){
     e.addEventListener('click',function(){
