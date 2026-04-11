@@ -70,22 +70,48 @@ body{font-family:var(--sn);background:var(--bg);color:var(--tx);min-height:100vh
 .ab.lock{background:rgba(71,85,105,.15);border:1px solid rgba(71,85,105,.3)}
 .aI{flex:1}.aT{font-size:.8rem;font-weight:600;margin-bottom:1px}.aD{font-size:.68rem;color:var(--tx2)}
 .aS{font-size:.75rem}
-.tk{grid-column:1/-1;overflow:hidden;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:.7rem 0;cursor:pointer;position:relative}
-.tk:hover{border-color:rgba(249,115,22,.3)}
-.tk .hint{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.65rem;color:var(--tx3);pointer-events:none;opacity:.7}
-.tki{display:flex;gap:4rem;white-space:nowrap;will-change:transform}
-.tkit{font-size:.8rem;color:var(--tx2);flex-shrink:0;padding:0 .2rem}.tkit span{color:var(--ac);font-weight:600}
+/* Fun Facts Preview */
+.ffp{grid-column:1/-1;background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.ffp-header{padding:1rem 1.2rem;border-bottom:1px solid var(--bdr);font-family:var(--sf);font-size:1.1rem;display:flex;justify-content:space-between;align-items:center}
+.ffp-more{font-family:var(--sn);font-size:.75rem;color:var(--ac);cursor:pointer;font-weight:500;transition:opacity .2s}
+.ffp-more:hover{opacity:.7}
+.ffp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0}
+.ffp-card{padding:1rem 1.2rem;border-right:1px solid rgba(30,45,61,.5);border-bottom:1px solid rgba(30,45,61,.5);text-align:center;transition:background .2s;cursor:pointer}
+.ffp-card:hover{background:var(--card2)}
+.ffp-card .ffi{font-size:1.5rem;margin-bottom:.3rem}
+.ffp-card .ffv{font-family:var(--mn);font-size:1.2rem;font-weight:600;color:var(--ac);margin-bottom:.15rem}
+.ffp-card .ffd{font-size:.7rem;color:var(--tx2);line-height:1.3}
+/* Fun Facts Full Overlay */
 .ff-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,14,23,.85);backdrop-filter:blur(8px);overflow-y:auto;padding:2rem}
 .ff-overlay.open{display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
-.ff-close{position:fixed;top:1.2rem;right:1.5rem;font-size:1.5rem;color:var(--tx2);cursor:pointer;z-index:10000;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--card);border:1px solid var(--bdr)}
-.ff-close:hover{color:var(--tx);border-color:var(--ac)}
+.ov-close{position:fixed;top:1.2rem;right:1.5rem;font-size:1.5rem;color:var(--tx2);cursor:pointer;z-index:10000;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--card);border:1px solid var(--bdr)}
+.ov-close:hover{color:var(--tx);border-color:var(--ac)}
 .ff-title{font-family:var(--sf);font-size:1.6rem;margin-bottom:1.5rem;margin-top:1rem;color:var(--tx)}
-.ff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;max-width:900px;width:100%}
+.ff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;max-width:900px;width:100%}
 .ff-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:1.1rem 1.3rem;transition:border-color .3s,transform .2s}
 .ff-card:hover{border-color:rgba(249,115,22,.3);transform:translateY(-2px)}
 .ff-card .ff-icon{font-size:1.4rem;margin-bottom:.4rem}
 .ff-card .ff-val{font-family:var(--mn);font-size:1.1rem;font-weight:600;color:var(--ac);margin-bottom:.2rem}
 .ff-card .ff-desc{font-size:.8rem;color:var(--tx2);line-height:1.4}
+/* Etappe Detail Overlay */
+.ed-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,14,23,.85);backdrop-filter:blur(8px);overflow-y:auto;padding:2rem}
+.ed-overlay.open{display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.ed-inner{max-width:600px;width:100%;margin-top:1rem}
+.ed-head{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.ed-num{font-family:var(--mn);font-size:1.2rem;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-weight:700;flex-shrink:0}
+.ed-name{font-family:var(--sf);font-size:1.5rem;font-weight:400}
+.ed-date{font-size:.8rem;color:var(--tx2);margin-top:.2rem}
+.ed-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.ed-stat{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:1rem;text-align:center}
+.ed-stat .edi{font-size:1.2rem;margin-bottom:.2rem}
+.ed-stat .edl{font-size:.6rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.1rem}
+.ed-stat .edv{font-family:var(--mn);font-size:1.2rem;font-weight:600}
+.ed-stat .eds{font-size:.7rem;color:var(--tx3);margin-top:.15rem}
+.ed-elev{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:1rem;margin-bottom:1rem}
+.ed-elev-title{font-size:.8rem;color:var(--tx2);margin-bottom:.5rem}
+.ed-elev canvas{width:100%;height:100px;display:block}
+.ed-btn{background:var(--card);border:1px solid var(--bdr);color:var(--tx2);padding:.6rem 1.2rem;border-radius:var(--r);font-size:.8rem;cursor:pointer;font-family:var(--sn);transition:all .3s;width:100%;text-align:center;margin-top:.5rem}
+.ed-btn:hover{border-color:var(--ac);color:var(--tx)}
 .up{grid-column:1/-1;background:var(--card);border:2px dashed var(--bdr);border-radius:var(--r);padding:2rem;text-align:center;transition:border-color .3s,background .3s;cursor:pointer}
 .up:hover{border-color:var(--ac);background:var(--acg)}
 .up input{display:none}
@@ -135,11 +161,18 @@ body{font-family:var(--sn);background:var(--bg);color:var(--tx);min-height:100vh
     <div class="aH">🏆 Achievements <span class="aC" id="aN">0/0</span></div>
     <div class="aG" id="aL"></div>
   </div>
-  <div class="tk" id="tkWrap"><div class="tki" id="tI"></div><div class="hint">antippen für alle Facts</div></div>
+  <div class="ffp" style="grid-column:1/-1">
+    <div class="ffp-header">🎉 Fun Facts <span class="ffp-more" id="ffMore">Alle anzeigen →</span></div>
+    <div class="ffp-grid" id="ffPreview"></div>
+  </div>
   <div class="ff-overlay" id="ffOverlay">
-    <div class="ff-close" id="ffClose">✕</div>
-    <div class="ff-title">🎉 Fun Facts</div>
+    <div class="ov-close" id="ffClose">✕</div>
+    <div class="ff-title">🎉 Alle Fun Facts</div>
     <div class="ff-grid" id="ffGrid"></div>
+  </div>
+  <div class="ed-overlay" id="edOverlay">
+    <div class="ov-close" id="edClose">✕</div>
+    <div class="ed-inner" id="edInner"></div>
   </div>
   <div class="demo-banner" id="demoBanner">🗺️ <span>Demo-Modus</span> — Lade GPX-Dateien aus Komoot hoch, um die Beispieldaten zu ersetzen</div>
   <div class="up" id="uZ">
@@ -366,8 +399,7 @@ function render(){
   }).join('');
   el.querySelectorAll('.et').forEach(function(e){
     e.addEventListener('click',function(){
-      var et=etappen[parseInt(e.dataset.i)];
-      if(et.coords&&et.coords.length)map.fitBounds(L.latLngBounds(et.coords),{padding:[60,60]});
+      openEtappeDetail(parseInt(e.dataset.i));
     });
   });
 
@@ -408,65 +440,111 @@ function renderElev(){
 
 // ===================== FUN FACTS =====================
 var funFactsData=[];
-var tickerAnim=null;
 
 function getFunFacts(s){
   return [
-    {icon:'🚴',val:s.td.toFixed(1)+' km',desc:'Gesamtdistanz bisher gefahren'},
-    {icon:'🍕',val:Math.round(s.tc/900)+' Pizzen',desc:'An verbrannter Energie — Mahlzeit!'},
-    {icon:'🏊',val:(s.td/63).toFixed(0)+'x',desc:'Den Bodensee der L\u00e4nge nach durchschwommen'},
-    {icon:'🌍',val:(s.td/40075*100).toFixed(3)+'%',desc:'Des gesamten Erdumfangs abgeradelt'},
-    {icon:'🗼',val:(s.te/330).toFixed(1)+'x',desc:'Den Eiffelturm hochgeradelt (330m)'},
-    {icon:'⚡',val:(s.tc*4184/36e5).toFixed(1)+' kWh',desc:'Verbrannte Energie — reicht f\u00fcr '+Math.round(s.tc*4184/36e5/.012)+' Smartphone-Ladungen'},
-    {icon:'🍫',val:Math.round(s.tc/530)+' Tafeln',desc:'Schokolade — als Energieäquivalent'},
-    {icon:'🐎',val:(s.td/(s.rd||1)).toFixed(0)+' km/Tag',desc:'Pro Fahrtag — ein Reiter im Mittelalter schafft nur ~40 km'},
-    {icon:'🚂',val:(s.td/250*60).toFixed(0)+' min',desc:'Per ICE bei 250 km/h w\u00e4re die Strecke so schnell erledigt'},
-    {icon:'🥾',val:(s.td/5).toFixed(0)+' Std',desc:'Zu Fu\u00df w\u00e4re das nonstop — also '+(s.td/5/24).toFixed(1)+' Tage'},
-    {icon:'🏔️',val:(s.te/8849*100).toFixed(1)+'%',desc:'Eines Mount Everest an H\u00f6henmetern gesammelt'},
-    {icon:'🍰',val:Math.round(s.tc/350)+' St\u00fcck',desc:'Kuchen verdient — Kalorien rein, Kalorien raus'},
+    {icon:'\u{1F6B4}',val:s.td.toFixed(1)+' km',desc:'Gesamtdistanz bisher gefahren'},
+    {icon:'\u{1F355}',val:Math.round(s.tc/900)+' Pizzen',desc:'An verbrannter Energie \u2014 Mahlzeit!'},
+    {icon:'\u{1F3CA}',val:(s.td/63).toFixed(0)+'x',desc:'Den Bodensee der L\u00e4nge nach durchschwommen'},
+    {icon:'\u{1F30D}',val:(s.td/40075*100).toFixed(3)+'%',desc:'Des gesamten Erdumfangs abgeradelt'},
+    {icon:'\u{1F5FC}',val:(s.te/330).toFixed(1)+'x',desc:'So oft die H\u00f6he des Eiffelturms (330m) erklommen'},
+    {icon:'\u26A1',val:(s.tc*4184/36e5).toFixed(1)+' kWh',desc:'Verbrannte Energie \u2014 reicht f\u00fcr '+Math.round(s.tc*4184/36e5/.012)+' Smartphone-Ladungen'},
+    {icon:'\u{1F36B}',val:Math.round(s.tc/530)+' Tafeln',desc:'Schokolade \u2014 als Energie\u00e4quivalent'},
+    {icon:'\u{1F40E}',val:(s.td/(s.rd||1)).toFixed(0)+' km/Tag',desc:'Pro Fahrtag \u2014 ein Reiter im Mittelalter schafft nur ~40 km'},
+    {icon:'\u{1F682}',val:(s.td/250*60).toFixed(0)+' min',desc:'Per ICE bei 250 km/h w\u00e4re die Strecke so schnell erledigt'},
+    {icon:'\u{1F97E}',val:(s.td/5).toFixed(0)+' Std',desc:'Zu Fu\u00df w\u00e4re das nonstop \u2014 also '+(s.td/5/24).toFixed(1)+' Tage'},
+    {icon:'\u{1F3D4}\uFE0F',val:(s.te/8849*100).toFixed(1)+'%',desc:'Eines Mount Everest an H\u00f6henmetern gesammelt'},
+    {icon:'\u{1F370}',val:Math.round(s.tc/350)+' St\u00fcck',desc:'Kuchen verdient \u2014 Kalorien rein, Kalorien raus'},
   ];
 }
 
 function renderTicker(s){
   funFactsData=getFunFacts(s);
-  var container=document.getElementById('tI');
-  // Build ticker items — triple them for seamless loop
-  var items=funFactsData.map(function(f){
-    return '<div class="tkit">'+f.icon+' '+f.desc.split('—')[0].split('—')[0].trim()+': <span>'+f.val+'</span></div>';
-  });
-  var tripled=items.concat(items).concat(items);
-  container.innerHTML=tripled.join('');
 
-  // Calculate total width and animate with JS for seamless loop
-  if(tickerAnim) cancelAnimationFrame(tickerAnim);
-  var offset=0;
-  requestAnimationFrame(function measure(){
-    var totalW=container.scrollWidth/3;
-    if(totalW<10){tickerAnim=requestAnimationFrame(measure);return}
-    var speed=0.5; // pixels per frame (~30px/sec at 60fps)
-    function step(){
-      offset-=speed;
-      if(Math.abs(offset)>=totalW) offset+=totalW;
-      container.style.transform='translateX('+offset+'px)';
-      tickerAnim=requestAnimationFrame(step);
-    }
-    step();
-  });
+  // Preview: show 4 random-ish rotating facts
+  var preview=document.getElementById('ffPreview');
+  var show=funFactsData.slice(0,6);
+  preview.innerHTML=show.map(function(f){
+    return '<div class="ffp-card" onclick="openFunFacts()"><div class="ffi">'+f.icon+'</div><div class="ffv">'+f.val+'</div><div class="ffd">'+f.desc+'</div></div>';
+  }).join('');
 
-  // Render overlay grid
+  // Full overlay grid
   var grid=document.getElementById('ffGrid');
   grid.innerHTML=funFactsData.map(function(f){
     return '<div class="ff-card"><div class="ff-icon">'+f.icon+'</div><div class="ff-val">'+f.val+'</div><div class="ff-desc">'+f.desc+'</div></div>';
   }).join('');
 }
 
+function openFunFacts(){document.getElementById('ffOverlay').classList.add('open')}
+
 function setupFunFacts(){
-  var wrap=document.getElementById('tkWrap');
-  var overlay=document.getElementById('ffOverlay');
-  var close=document.getElementById('ffClose');
-  wrap.addEventListener('click',function(){overlay.classList.add('open')});
-  close.addEventListener('click',function(e){e.stopPropagation();overlay.classList.remove('open')});
-  overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('open')});
+  document.getElementById('ffMore').addEventListener('click',openFunFacts);
+  document.getElementById('ffClose').addEventListener('click',function(e){e.stopPropagation();document.getElementById('ffOverlay').classList.remove('open')});
+  document.getElementById('ffOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')});
+  document.getElementById('edClose').addEventListener('click',function(e){e.stopPropagation();document.getElementById('edOverlay').classList.remove('open')});
+  document.getElementById('edOverlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')});
+}
+
+// ===================== ETAPPE DETAIL =====================
+function openEtappeDetail(idx){
+  var et=etappen[idx];
+  if(!et) return;
+  var netMin=estimateNetMins(et.distance);
+  var kcal=cc(et.distance,netMin,et.elevGain||0);
+  var speed=et.duration>0?(et.distance/(et.duration/60)).toFixed(1):'0';
+  var speedNet=(et.distance/(netMin/60)).toFixed(1);
+  var dateStr=et.date||'';
+  if(dateStr){var dp=dateStr.split('-');dateStr=dp[2]+'.'+dp[1]+'.'+dp[0]}
+
+  var html='<div class="ed-head">'+
+    '<div class="ed-num" style="color:'+et.color+';background:'+et.color+'18;border:2px solid '+et.color+'55">'+(idx+1)+'</div>'+
+    '<div><div class="ed-name">'+et.name+'</div>'+(dateStr?'<div class="ed-date">\u{1F4C5} '+dateStr+'</div>':'')+'</div></div>'+
+    '<div class="ed-stats">'+
+      '<div class="ed-stat"><div class="edi">\u{1F4CF}</div><div class="edl">Distanz</div><div class="edv">'+et.distance+' km</div></div>'+
+      '<div class="ed-stat"><div class="edi">\u23F1</div><div class="edl">Dauer (brutto)</div><div class="edv">'+fd(et.duration)+'</div><div class="eds">Netto ~'+fd(netMin)+'</div></div>'+
+      '<div class="ed-stat"><div class="edi">\u26F0</div><div class="edl">H\u00f6henmeter</div><div class="edv">'+(et.elevGain||0)+' m \u2191</div><div class="eds">'+(et.elevLoss||0)+' m \u2193</div></div>'+
+      '<div class="ed-stat"><div class="edi">\u{1F525}</div><div class="edl">Kalorien</div><div class="edv">'+kcal+' kcal</div><div class="eds">\u2248 '+(kcal/900).toFixed(1)+' Pizzen</div></div>'+
+      '<div class="ed-stat"><div class="edi">\u{1F4A8}</div><div class="edl">\u00d8 Tempo (brutto)</div><div class="edv">'+speed+' km/h</div><div class="eds">Netto ~'+speedNet+' km/h</div></div>'+
+      '<div class="ed-stat"><div class="edi">\u{1F3C5}</div><div class="edl">\u00c4quivalent</div><div class="edv">'+(et.distance/42.195).toFixed(2)+'x</div><div class="eds">Marathon</div></div>'+
+    '</div>';
+
+  // Mini elevation profile for this etappe
+  html+='<div class="ed-elev"><div class="ed-elev-title">\u{1F4C8} H\u00f6henprofil dieser Etappe</div><canvas id="edElevC"></canvas></div>';
+  html+='<div class="ed-btn" onclick="document.getElementById(\'edOverlay\').classList.remove(\'open\');var et=etappen['+idx+'];if(et.coords&&et.coords.length)map.fitBounds(L.latLngBounds(et.coords),{padding:[60,60]})">\u{1F5FA} Auf Karte anzeigen</div>';
+
+  document.getElementById('edInner').innerHTML=html;
+  document.getElementById('edOverlay').classList.add('open');
+
+  // Draw mini elevation
+  setTimeout(function(){drawEtappeElev(et)},100);
+}
+
+function drawEtappeElev(et){
+  var c=document.getElementById('edElevC');
+  if(!c) return;
+  var w0=c.parentElement,w=w0.clientWidth-0,h=100;
+  c.width=w*2;c.height=h*2;
+  var ctx=c.getContext('2d');ctx.scale(2,2);
+  var allE=[];
+  if(et.elevations&&et.elevations.length){
+    var step=Math.max(1,Math.floor(et.elevations.length/80));
+    for(var i=0;i<et.elevations.length;i+=step) allE.push(et.elevations[i]);
+  } else {
+    var base=50;
+    for(var j=0;j<20;j++) allE.push(base+Math.sin(j/20*Math.PI)*(et.elevGain||50)*.6+Math.random()*15);
+  }
+  if(allE.length<2) return;
+  var mn=Math.min.apply(null,allE),mx=Math.max.apply(null,allE),rng=mx-mn||1;
+  var g=ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,et.color+'50');g.addColorStop(1,et.color+'08');
+  ctx.beginPath();ctx.moveTo(0,h);
+  allE.forEach(function(e,i){ctx.lineTo((i/(allE.length-1))*w,h-((e-mn)/rng)*(h-10)-5)});
+  ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();
+  allE.forEach(function(e,i){var x=(i/(allE.length-1))*w,y=h-((e-mn)/rng)*(h-10)-5;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
+  ctx.strokeStyle=et.color;ctx.lineWidth=1.5;ctx.stroke();
+  ctx.fillStyle='#64748b';ctx.font='10px monospace';
+  ctx.fillText(Math.round(mx)+'m',4,14);ctx.fillText(Math.round(mn)+'m',4,h-4);
 }
 
 // ===================== PERSISTENCE =====================
